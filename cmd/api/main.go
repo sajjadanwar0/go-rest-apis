@@ -53,6 +53,9 @@ type config struct {
 	cors struct {
 		trustedOrigins []string
 	}
+	jwt struct {
+		secret string
+	}
 }
 
 type application struct {
@@ -89,8 +92,8 @@ func main() {
 	// with your own Mailtrap credentials.
 	flag.StringVar(&cfg.smtp.host, "smtp-host", "smtp.mailtrap.io", "SMTP host")
 	flag.IntVar(&cfg.smtp.port, "smtp-port", 25, "SMTP port")
-	flag.StringVar(&cfg.smtp.username, "smtp-username", "88d6f5d3e0342a", "SMTP username")
-	flag.StringVar(&cfg.smtp.password, "smtp-password", "a0a0fc6c8df6af", "SMTP password")
+	flag.StringVar(&cfg.smtp.username, "smtp-username", "", "SMTP username")
+	flag.StringVar(&cfg.smtp.password, "smtp-password", "", "SMTP password")
 	flag.StringVar(&cfg.smtp.sender, "smtp-sender", "Greenlight <no-reply@sajjadanwar.io>", "SMTP sender")
 	// Use the flag.Func() function to process the -cors-trusted-origins command line
 	// flag. In this we use the strings.Fields() function to split the flag value into a
@@ -102,6 +105,9 @@ func main() {
 		cfg.cors.trustedOrigins = strings.Fields(val)
 		return nil
 	})
+
+	//flag.StringVar(&cfg.jwt.secret, "jwt-secret", "", "JWT secret")
+
 	// Create a new version boolean flag with the default value of false.
 	displayVersion := flag.Bool("version", false, "Display version and exit")
 	flag.Parse()

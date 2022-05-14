@@ -17,6 +17,8 @@ confirm:
 # ==================================================================================== #
 # DEVELOPMENT
 # ==================================================================================== #
+#run/api==>for including the jwt
+#@go run ./cmd/api -db-dsn=${GREENLIGHT_DB_DSN} -jwt-secret=${JWT_SECRET}
 
 ## run/api: run the cmd/api application
 .PHONY: run/api
@@ -77,3 +79,27 @@ build/api:
 	@echo 'Building cmd/api...'
 	go build -ldflags=${linker_flags} -o=./bin/api ./cmd/api
 	GOOS=linux GOARCH=amd64 go build -ldflags=${linker_flags} -o=./bin/linux_amd64/api ./cmd/api
+
+# ==================================================================================== #
+# PRODUCTION
+# ==================================================================================== #
+production_host_ip = '45.55.49.87'
+## production/connect: connect to the production server
+.PHONY: production/connect
+production/connect:
+	ssh greenlight@${production_host_ip}
+
+## production/deploy/api: deploy the api to production
+.PHONY: production/deploy/api
+production/deploy/api:
+	rsync -P ./bin/linux_amd64/api greenlight@${production_host_ip}:~
+	rsync -rP --delete ./migrations greenlight@${production_host_ip}:~
+	rsync -P ./remote/production/api.service greenlight@${production_host_ip}:~
+	ssh -t greenlight@${production_host_ip} '\
+	migrate -path ~/migrations -database $$GREENLIGHT_DB_DSN up \
+	&& sudo mv ~/api.service /etc/systemd/system/ \
+	&& sudo systemctl enable api \
+	&& sudo systemctl restart api \
+	&& sudo mv ~/Caddyfile /etc/caddy/ \
+    && sudo systemctl reload caddy \
+	'
