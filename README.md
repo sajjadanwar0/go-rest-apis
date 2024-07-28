@@ -8,8 +8,9 @@ Greenlight
   6) Validations
   7) Email setup
   8) Production Setup
-  9) Implemented various metrics to know about how your app is behaving
-  10) MAKEFILE for various automation
-  11) Production Ready
-  12) CORS implemented
-  13) JWT (Partically completed...as mostly i used the stateful tokens)
+  9) Caddy Server
+  11) Implemented various metrics to know about how your app is behaving
+  12) MAKEFILE for various automation
+  13) Production Ready
+  14) CORS implemented
+  15) JWT (Partially completed...as mostly i used the stateful tokens)
